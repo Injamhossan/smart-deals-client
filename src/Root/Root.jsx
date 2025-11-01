@@ -1,11 +1,16 @@
 import React from 'react';
-import { createBrowserRouter } from 'react-router';
+import Navbar from '../Components/Navbar/Navbar';
+import { Outlet } from 'react-router';
+import Footer from '../Components/Footer/Footer';
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <div>Hello World</div>,
-  },
-]);
+const Root = () => {
+    return (
+        <div>
+            <Navbar></Navbar>
+            <Outlet></Outlet>
+            <Footer></Footer>
+        </div>
+    );
+};
 
-export default router;
+export default Root;
