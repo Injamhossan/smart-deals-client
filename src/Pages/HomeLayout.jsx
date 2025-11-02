@@ -5,7 +5,7 @@ import LatestProducts from '../Components/LatestProducts/LatestProducts';
 const HomeLayout = () => {
     return (
         <div>
-           
+
         </div>
     );
 };

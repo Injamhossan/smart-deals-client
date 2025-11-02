@@ -1,17 +1,4 @@
 import React from 'react';
-const LatestProducts = ({ latestProductsPromise }) => {
-  // You would typically use this promise in a hook like useSWR or React.Suspense
-  console.log("LatestProducts component received promise:", latestProductsPromise);
-  return (
-    <div className="ml-8 p-4 bg-white rounded-lg shadow-md hidden lg:block">
-      <h3 className="text-lg font-semibold text-[#001931] mb-2">Latest Products</h3>
-      <p className="text-sm text-gray-600">(Product data would load here)</p>
-    </div>
-  );
-};
-
-
-const latestProductsPromise = fetch('http://localhost:5000/latest-products').then(res => res.json());
 
 const Banner = () => {
     return (
@@ -74,9 +61,6 @@ const Banner = () => {
             Post a Product
           </button>
         </div>
-      </div>
-       <div>
-        <LatestProducts latestProductsPromise={latestProductsPromise}></LatestProducts>
       </div>
     </div>
         </div>

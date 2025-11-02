@@ -8,7 +8,7 @@ import MyBids from '../Pages/MyBids';
 import MyProducts from '../Pages/MyProducts';
 import Registration from '../Components/Registration/Registration';
 import Login from '../Components/Login/Login';
-import HomeLayout from '../Pages/HomeLayout';
+
 
 
 const router = createBrowserRouter([
@@ -18,7 +18,7 @@ const router = createBrowserRouter([
     children: [
         {
             index: true,
-            element: <HomeLayout />,
+            element: <Home />,
         },
         {
             path: "allproducts",
