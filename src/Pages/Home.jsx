@@ -1,5 +1,9 @@
 import React from "react";
+import LatestProducts from "../Components/LatestProducts/LatestProducts";
 
+
+
+const latestProductsPromise = fetch('http://localhost:5000/latest-products').then(res => res.json());
 const Home = () => {
   return (
     <div className="flex items-center justify-center bg-[linear-gradient(128.29deg,rgba(255,230,252,1),rgba(224,248,245,1)_100%)] px-4 py-[70px]">
@@ -20,17 +24,18 @@ const Home = () => {
 
         {/* Subtext */}
         <p className="text-[#627382] text-lg sm:text-xl mb-8">
-          SmartDeals helps you sell, resell, and shop from trusted local sellers — all in one place!
+          SmartDeals helps you sell, resell, and shop from trusted local sellers
+          — all in one place!
         </p>
 
         {/* Search Bar */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-8">
           <div className="relative w-full sm:w-[400px]">
-<input
-  type="search"
-  placeholder="Search for Products, Categories..."
-  className="w-full py-3 px-5 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9F62F2] placeholder-gray-500"
-/>
+            <input
+              type="search"
+              placeholder="Search for Products, Categories..."
+              className="w-full py-3 px-5 rounded-full border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#9F62F2] placeholder-gray-500"
+            />
 
             <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#632EE3] to-[#9F62F2] text-white rounded-full p-2">
               <svg
@@ -59,6 +64,9 @@ const Home = () => {
             Post a Product
           </button>
         </div>
+      </div>
+      <div>
+        <LatestProducts latestProductsPromise={latestProductsPromise}></LatestProducts>
       </div>
     </div>
   );
