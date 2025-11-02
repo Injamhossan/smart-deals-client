@@ -1,9 +1,18 @@
 import React from 'react';
+import { Link } from 'react-router';
 
 const Navbar = () => {
-    return (
-        <div>
-            <div className="navbar bg-base-100 shadow-sm">
+    const links = <>
+      <Link to="/">Home</Link>
+      <Link to="/allproducts">All Products</Link>
+      <Link to="/myproducts" >My Products</Link>
+      <Link to="/mybids">My Bids</Link>
+      <Link to="/createproducts">Create Products</Link>
+    </>
+  
+  return (
+        <div className='bg-white shadow-sm'>
+            <div className="navbar  mx-auto max-w-[1700px]">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -11,37 +20,21 @@ const Navbar = () => {
       </div>
       <ul
         tabIndex="-1"
-        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
-        <li><a>Item 1</a></li>
-        <li>
-          <a>Parent</a>
-          <ul className="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </li>
-        <li><a>Item 3</a></li>
+        className="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow text-black gap-3">
+        
+        {links}
       </ul>
     </div>
-    <a className="btn btn-ghost text-xl">daisyUI</a>
+    <a className="text-xl text-black font-bold text-[28px]">Smart <span className='bg-clip-text text-transparent bg-gradient-to-r from-[#632EE3] to-[#9F62F2]'>Deals</span> </a>
   </div>
   <div className="navbar-center hidden lg:flex">
-    <ul className="menu menu-horizontal px-1">
-      <li><a>Item 1</a></li>
-      <li>
-        <details>
-          <summary>Parent</summary>
-          <ul className="p-2">
-            <li><a>Submenu 1</a></li>
-            <li><a>Submenu 2</a></li>
-          </ul>
-        </details>
-      </li>
-      <li><a>Item 3</a></li>
+    <ul className="menu menu-horizontal px-1 text-black gap-6 font-semibold text-[15px]">
+     {links}
     </ul>
   </div>
-  <div className="navbar-end">
-    <a className="btn">Button</a>
+  <div className="navbar-end gap-3">
+    <Link to= "login" className="btn font-semibold border border-[#9F62F2] text-transparent bg-clip-text bg-gradient-to-r from-[#632EE3] to-[#9F62F2] hover:bg-[#9F62F2] hover:text-white hover:from-[#9F62F2] hover:to-[#632EE3] transition">Log in</Link>
+    <Link to="register" className="btn font-semibold text-white bg-gradient-to-r from-[#632EE3] to-[#9F62F2] shadow-md hover:opacity-90 transition border-0">Register</Link>
   </div>
 </div>
         </div>
