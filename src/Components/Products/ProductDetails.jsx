@@ -17,35 +17,22 @@ const formatDate = (dateString) => {
 };
 
 const ProductDetails = () => {
-  // const { id } = useParams();
-  // --- PORIBORTON SHURU ---
 
-  // useState ebong useEffect hook baad deya holo
-  // const [product, setProduct] = useState(null);
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => { ... fetch logic baad ... }, [id]);
-
-  // Loader theke data nite hobe
   const product = useLoaderData();
 
-  // Loading state React Router handle korbe.
-  // Amra shudhu check korbo data peyechi kina.
-
-  // --- PORIBORTON SHESH ---
 
   if (!product) {
-    // Loader jodi data na paye (null/undefined return kore)
+
     return (
       <div className="text-center p-20 text-lg font-medium">
         Product not found.
       </div>
     );
   }
-  // Baki shob JSX code thik ache, kono poriborton dorkar nei
+ 
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      {/* Back to Products Link (using React Router Link) */}
+    
       <Link
         to="/"
         className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 mb-4"
