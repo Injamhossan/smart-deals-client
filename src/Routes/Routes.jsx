@@ -8,7 +8,7 @@ import MyBids from '../Pages/MyBids';
 import MyProducts from '../Pages/MyProducts';
 import Registration from '../Components/Registration/Registration';
 import Login from '../Components/Login/Login';
-
+import ProductDetails from '../Components/Products/ProductDetails';
 
 
 const router = createBrowserRouter([
@@ -37,13 +37,25 @@ const router = createBrowserRouter([
             element: <MyProducts />
         },
         {
+            path: "createproducts",
+            element: <CreateProject/>,
+        },
+        {
             path: "register",
             element: <Registration/>
         },
         {
             path: "login",
             element: <Login/>
+        },
+        
+        {
+            path: "product/:id", 
+            element: <ProductDetails />,
+
+            loader: ({ params }) => fetch(`http://localhost:5000/products/${params.id}`)
         }
+
     ]
   },
 ]);

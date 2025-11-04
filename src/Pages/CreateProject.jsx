@@ -3,7 +3,7 @@ import React from 'react';
 const CreateProject = () => {
     return (
         <div>
-               <p> Create Project Section </p>
+               <p className='text-black'> Create Project Section </p>
         </div>
     );
 };
