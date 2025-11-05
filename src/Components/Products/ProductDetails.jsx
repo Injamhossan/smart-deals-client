@@ -170,6 +170,11 @@ const ProductDetails = () => {
           </button>
         </div>
       </div>
+
+
+      <div>
+        <h3 className="text-3xl text-black font-bold">Bids for this Products:  <span></span></h3>
+      </div>
     </main>
   );
 };
