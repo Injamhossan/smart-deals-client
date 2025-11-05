@@ -9,6 +9,7 @@ import MyProducts from '../Pages/MyProducts';
 import Registration from '../Components/Registration/Registration';
 import Login from '../Components/Login/Login';
 import ProductDetails from '../Components/Products/ProductDetails';
+import Profile from '../Components/Profile/Profile';
 
 
 const router = createBrowserRouter([
@@ -48,7 +49,10 @@ const router = createBrowserRouter([
             path: "login",
             element: <Login/>
         },
-        
+        {
+            path: "profile",
+            element: <Profile/>
+        },
         {
             path: "product/:id", 
             element: <ProductDetails />,
@@ -61,3 +65,4 @@ const router = createBrowserRouter([
 ]);
 
 export default router;
+
