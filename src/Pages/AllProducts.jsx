@@ -7,28 +7,19 @@ const AllProducts = () => {
   const [loading, setLoading] = useState(true);
 
   // Shudhu ei section-ta change hobe
+  // Shudhu ei section-ta change hobe
   useEffect(() => {
     fetch('http://localhost:5000/products')
-      .then(res => res.json())
-      .then(rawData => {
-        
-        // Regex to extract the ID from "ObjectId('...')"
-        const regex = /ObjectId\('([^']+)'\)/;
-
-        // Data clean korar jonno map
-        const cleanData = rawData.map(product => {
-          const match = product._id.match(regex);
-          // Jodi match pay, tahole clean ID (group 1) nibe
-          // Noito, original _id (jodi already clean thake)
-          const cleanId = match ? match[1] : product._id; 
-
-          return {
-            ...product, // product-ar baki shob data...
-            _id: cleanId  // ...shudhu _id-take cleanId diye replace korbe
-          };
-        });
-
-        setProducts(cleanData); // Clean data state-a set korun
+      .then(res => {
+        // ✅ প্রথমে চেক করুন রেসপন্স ঠিক আছে কিনা
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
+      .then(data => {
+        // ✅ সার্ভার থেকে যা এসেছে, সরাসরি সেট করে দিন
+        setProducts(data); 
         setLoading(false);
       })
       .catch(err => {
@@ -36,6 +27,7 @@ const AllProducts = () => {
         setLoading(false);
       });
   }, []);
+  // --- Change ei porjonto ---
   // --- Change ei porjonto ---
 
   if (loading) {

@@ -1,18 +1,9 @@
 /* eslint-disable no-constant-condition */
+import { GoogleAuthProvider, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut } from 'firebase/auth';
 import React, { useState, useEffect } from 'react';
-
-// --- Firebase SDKs ---
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-} from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { auth } from '../../firebase/firebase';
 
 
-import { auth, db } from '../../firebase/firebase';
 
 const GoogleIcon = () => (
   <svg className="w-5 h-5" viewBox="0 0 48 48">
@@ -23,8 +14,11 @@ const GoogleIcon = () => (
   </svg>
 );
 
+// ✅ আপনার ব্যাকএন্ড সার্ভারের URL
+const API_URL = 'http://localhost:5000';
 
-const appId = typeof "__app_id" !== 'undefined' ? "__app_id" : 'default-app-id';
+// ❌ appId-এর আর দরকার নেই, কারণ Firestore ব্যবহার হচ্ছে না
+// const appId = typeof "__app_id" !== 'undefined' ? "__app_id" : 'default-app-id';
 
 const Login = () => {
 
@@ -36,6 +30,7 @@ const Login = () => {
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    // ✅ Firebase Auth স্টেট লিসেনার
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setAuthReady(true);
@@ -44,26 +39,45 @@ const Login = () => {
   }, []);
 
  
-  const saveUserDataToFirestore = async (firebaseUser) => {
-    if (!db) return;
-    const userDocRef = doc(db, 'artifacts', appId, 'public/data', 'users', firebaseUser.uid);
+  // ✅✅✅ পরিবর্তন এখানে ✅✅✅
+  // এই ফাংশনটি Firebase ইউজারকে আপনার MongoDB-তে সিঙ্ক করবে
+  const saveUserToMongoBackend = async (firebaseUser) => {
+    
+    // ইউজার অবজেক্ট থেকে প্রয়োজনীয় তথ্য নিন
     const userData = {
       uid: firebaseUser.uid,
       displayName: firebaseUser.displayName,
       email: firebaseUser.email,
       photoURL: firebaseUser.photoURL,
-      lastLogin: new Date().toISOString(), 
     };
+
     try {
-      await setDoc(userDocRef, userData, { merge: true });
-      console.log("User data saved/merged to Firestore.");
-    } catch (firestoreError) {
-      console.error("Error saving user data:", firestoreError);
-      setError("Failed to save user profile.");
+      // আপনার কাস্টম ব্যাকএন্ডের /sync-user এন্ডপয়েন্টে কল করুন
+      const response = await fetch(`${API_URL}/sync-user`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to sync user to custom DB");
+      }
+
+      const data = await response.json();
+      console.log("User synced to MongoDB:", data.message);
+
+    } catch (syncError) {
+      console.error("Error syncing user data to MongoDB:", syncError);
+      // এখানে এরর দেখালেও ইউজারকে লগইন করতে বাধা দেবেন না,
+      // কারণ Firebase লগইন সফল হয়েছে। শুধু কনসোলে এরর দেখান।
+      setError("Login successful, but failed to sync profile.");
     }
   };
 
-  
+ 
+  // ✅ ইমেইল/পাসওয়ার্ড লগইন
   const handleEmailPasswordLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -73,25 +87,35 @@ const Login = () => {
     setIsLoading(true);
     setError(null);
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      console.log("Email login successful.");
+      // ১. Firebase-এ লগইন করুন
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Firebase email login successful.");
+
+      // ২. ✅ লগইন সফল হলে, MongoDB-তে সিঙ্ক করুন
+      await saveUserToMongoBackend(userCredential.user);
+
     } catch (authError) {
-      console.error("Email login error:", authError);
+      console.error("Firebase email login error:", authError);
       setError("Failed to login. Check your email or password.");
     } finally {
       setIsLoading(false);
     }
   };
 
+  // ✅ গুগল লগইন
   const handleGoogleLogin = async () => {
     setIsLoading(true);
     setError(null);
     try {
+      // ১. Firebase দিয়ে গুগল পপআপ দেখান
       const provider = new GoogleAuthProvider();
       const result = await signInWithPopup(auth, provider);
-     
-      await saveUserDataToFirestore(result.user);
-      console.log("Google login successful.");
+      
+      console.log("Firebase Google login successful.");
+      
+      // ২. ✅ লগইন সফল হলে, MongoDB-তে সিঙ্ক করুন
+      await saveUserToMongoBackend(result.user);
+    
     } catch (authError) {
       console.error("Google login error:", authError);
       setError("Failed to login with Google.");
@@ -104,7 +128,7 @@ const Login = () => {
     await signOut(auth);
   };
 
-  
+ 
   if (!authReady) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -113,6 +137,7 @@ const Login = () => {
     );
   }
 
+  // লগড-ইন UI (Firebase user অবজেক্ট থেকে)
   if (user) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
@@ -129,7 +154,7 @@ const Login = () => {
             />
           )}
           <p className="text-lg text-gray-700">{user.displayName || user.email}</p>
-          <p className="text-sm text-gray-500">User ID: {user.uid}</p>
+          <p className="text-sm text-gray-500">UID: {user.uid}</p>
           <button
             onClick={handleSignOut}
             className="w-full py-3 font-semibold text-white bg-gradient-to-r from-red-600 to-pink-600 rounded-lg shadow-md hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
@@ -142,6 +167,7 @@ const Login = () => {
   }
 
 
+  // --- লগইন ফর্ম (UI অপরিবর্তিত) ---
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
       
@@ -158,14 +184,15 @@ const Login = () => {
           </a>
         </p>
         
-        {/* Error Display */}
+                {/* Error Display */}
+
         {error && (
           <p className="text-sm text-center text-red-600 bg-red-50 p-3 rounded-lg">
             {error}
           </p>
         )}
 
-        {/* ফর্ম */}
+        {/* ফর্মটি এখন handleEmailPasswordLogin-কে কল করবে */}
         <form className="space-y-6" onSubmit={handleEmailPasswordLogin}>
           
           <div>
